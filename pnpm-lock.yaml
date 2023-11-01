@@ -15,6 +15,7 @@ specifiers:
   classnames: ^2.3.2
   eslint: ^8
   eslint-config-next: 13.5.4
+  git-cz: ^4.9.0
   immer: ^10.0.3
   lodash: ^4.17.21
   next: 13.5.4
@@ -52,6 +53,7 @@ devDependencies:
   autoprefixer: 10.4.16_postcss@8.4.31
   eslint: 8.51.0
   eslint-config-next: 13.5.4_eslint@8.51.0+typescript@5.2.2
+  git-cz: 4.9.0
   postcss: 8.4.31
   tailwindcss: 3.3.3
   typescript: 5.2.2
@@ -1571,6 +1573,11 @@ packages:
       resolve-pkg-maps: 1.0.0
     dev: true
 
+  /git-cz/4.9.0:
+    resolution: {integrity: sha512-cSRL8IIOXU7UFLdbziCYqg8f8InwLwqHezkiRHNSph7oZqGv0togId1kMTfKil6gzK0VaSXeVBb4oDl0fQCHiw==}
+    hasBin: true
+    dev: true
+
   /glob-parent/5.1.2:
     resolution: {integrity: sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==}
     engines: {node: '>= 6'}
@@ -2390,8 +2397,8 @@ packages:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
     dev: false
 
-  /punycode/2.3.0:
-    resolution: {integrity: sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA==}
+  /punycode/2.3.1:
+    resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
     dev: true
 
@@ -3429,7 +3436,7 @@ packages:
   /uri-js/4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
     dependencies:
-      punycode: 2.3.0
+      punycode: 2.3.1
     dev: true
 
   /use-immer/0.9.0_immer@10.0.3+react@18.2.0:
