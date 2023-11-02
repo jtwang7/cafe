@@ -3,6 +3,7 @@ import cls from "classnames";
 import _ from "lodash";
 import { Popconfirm, Space, Tooltip } from "antd";
 import {
+  LinkOutlined,
   MinusCircleOutlined,
   PlusCircleOutlined,
   QuestionCircleOutlined,
@@ -14,6 +15,7 @@ type ITreeNodeProps = {
   nodeData?: IArticleData[0];
   onAdd?: React.MouseEventHandler<HTMLSpanElement>;
   onRemove?: () => void;
+  onLinkAction?: (link: string) => void;
 };
 
 export default function TreeNode(props: ITreeNodeProps) {
@@ -25,6 +27,9 @@ export default function TreeNode(props: ITreeNodeProps) {
     onRemove = () => {
       console.log("remove");
     },
+    onLinkAction = (link) => {
+      console.log("link:" + link);
+    },
   } = props;
 
   if (_.isEmpty(nodeData)) {
@@ -34,15 +39,22 @@ export default function TreeNode(props: ITreeNodeProps) {
   return (
     <div className="flex items-center">
       {nodeData.referer ? (
-        <Link
-          href={nodeData.referer}
-          className={cls(
-            { "font-semibold": !!nodeData.children?.length },
-            { "line-through text-slate-300": nodeData.disabled }
-          )}
-        >
-          {nodeData.title}
-        </Link>
+        <>
+          <LinkOutlined className="m-1" />
+          <Link
+            href={nodeData.referer}
+            className={cls(
+              { "font-semibold": !!nodeData.children?.length },
+              { "line-through text-slate-300": nodeData.disabled }
+            )}
+            onClick={(e) => {
+              e.preventDefault();
+              onLinkAction?.(nodeData.referer!);
+            }}
+          >
+            {nodeData.title}
+          </Link>
+        </>
       ) : (
         <span
           className={cls(

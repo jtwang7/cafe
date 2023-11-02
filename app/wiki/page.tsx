@@ -30,10 +30,18 @@ import { theme } from "./theme";
 import CatalogForm from "./_components/CatalogForm";
 import { IArticleData } from "../_type/config";
 import { useGetCatalog } from "./_fetchers/useGetCatalog";
+import { GITHUB_REGNEX } from "../_constants/regnexRules";
+import { checkSiteAllowIFrame } from "./_network/checkSiteAllowIFrame";
 
 export default function WikiPage() {
   const { mutate } = useSWRConfig();
   const { catalog, isCatalogFetchLoading, catalogKey } = useGetCatalog();
+
+  /* global message notice */
+  const [messageApi, contextHolder] = message.useMessage();
+
+  /* 当前展示的iframe链接 */
+  const [iframeLink, setIframeLink] = useState("");
 
   /* 监听 ⌘+k 聚焦搜索框 */
   const cascaderRef = useRef<any>(null);
@@ -63,33 +71,56 @@ export default function WikiPage() {
     useBoolean(false);
   const segmentedMap = {
     total: () => (
-      <Tree
-        showLine
-        blockNode
-        switcherIcon={<DownOutlined />}
-        defaultExpandAll
-        fieldNames={{ key: "_id" }}
-        treeData={catalog as any}
-        titleRender={(nodeData: any) => (
-          <TreeNode
-            nodeData={nodeData}
-            onAdd={() => {
-              setDrawerOpen();
-              setCurrentNode(nodeData);
-            }}
-            onRemove={async () => {
-              try {
-                await axiosInstance.post("/api/removeCatalogRecord", {
-                  path: nodeData.localDir,
+      <div className="shadow-md rounded-md p-2">
+        <Tree
+          height={750}
+          showLine
+          blockNode
+          switcherIcon={<DownOutlined />}
+          defaultExpandAll
+          fieldNames={{ key: "_id" }}
+          treeData={catalog as any}
+          titleRender={(nodeData: any) => (
+            <TreeNode
+              nodeData={nodeData}
+              onAdd={() => {
+                setDrawerOpen();
+                setCurrentNode(nodeData);
+              }}
+              onRemove={async () => {
+                try {
+                  await axiosInstance.post("/api/removeCatalogRecord", {
+                    path: nodeData.localDir,
+                  });
+                  mutate(catalogKey);
+                } catch (error) {
+                  message.error("记录移除失败");
+                }
+              }}
+              onLinkAction={async (_link) => {
+                messageApi.open({
+                  type: "loading",
+                  content: "网页正在加载...",
+                  duration: 0,
                 });
-                mutate(catalogKey);
-              } catch (error) {
-                message.error("记录移除失败");
-              }
-            }}
-          />
-        )}
-      />
+                // github官方网站无法直接在iframe加载，特殊处理成`github1s`非官方网站
+                let link = _link;
+                if (GITHUB_REGNEX.test(link)) {
+                  link = _link.replace("github", "github1s");
+                }
+                const allowIFrame = await checkSiteAllowIFrame(link);
+                if (allowIFrame) {
+                  setIframeLink(link);
+                } else {
+                  // 不允许iframe嵌入的网页，直接打开链接
+                  window.open(link, "_blank");
+                  messageApi.destroy();
+                }
+              }}
+            />
+          )}
+        />
+      </div>
     ),
     web: () => null,
     local: () => null,
@@ -97,6 +128,7 @@ export default function WikiPage() {
 
   return (
     <ConfigProvider theme={theme}>
+      {contextHolder}
       <div className="h-full flex">
         {/* 侧边栏 */}
         <div
@@ -182,7 +214,17 @@ export default function WikiPage() {
         </div>
         {/* 主视图 */}
         <div className={cls("h-full flex-auto")}>
-          <div className="h-full bg-black p-3"></div>
+          <div className="h-full bg-slate-200 p-2">
+            <iframe
+              width="100%"
+              height="100%"
+              className={"rounded-md"}
+              src={iframeLink}
+              onLoad={() => {
+                messageApi.destroy();
+              }}
+            />
+          </div>
         </div>
       </div>
     </ConfigProvider>
